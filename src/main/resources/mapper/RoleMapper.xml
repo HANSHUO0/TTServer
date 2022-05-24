@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yy.dao.RoleDao">
+
+	<select id="selRole"  resultType="Role" parameterType="Role">
+		select * from  ba_role where groupID = #{groupID} AND depID = #{depID}
+	</select> 
+
+	<!-- 添加 -->
+	<insert id="addRole" parameterType="Role"  >
+		        insert into ba_role (groupID,depID,roleID,createTime) values 
+		        <foreach collection="ids.split(',')" item="item" index="index" separator=",">
+		        		(#{groupID},#{depID},#{item},now())  
+		        </foreach>  
+	</insert>
+	
+	<!-- 删除 -->
+	<delete id="deleteRole" parameterType="Role" >
+		        delete from ba_role where groupID = #{groupID} and depID = #{depID}		        	
+	</delete>
+	
+
+</mapper>

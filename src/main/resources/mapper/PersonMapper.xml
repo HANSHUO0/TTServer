@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yy.dao.PersonDao">
+
+<select id="selPerson"  resultType="Person" parameterType="Person">
+		select * from  ba_person INNER JOIN im_user 
+		on ba_person.userID = im_user.ID
+		<where>
+			<if test="userId!=null and userId!=''">AND ba_person.userID = #{userId}</if>
+			<if test="groupId!=null and groupId!=''">AND ba_person.groupID = #{groupId}</if>
+			<if test="depID!=null and depID!=''">AND FIND_IN_SET(depID,#{depID})</if>
+			<if test="workState!=null and workState!=''">AND workState = #{workState}</if>
+			<if test="psnName!=null and psnName!=''">AND psnName like '%${psnName}%'</if>
+		</where>
+		order by personNumber asc
+
+</select> 
+
+ <!-- 添加  -->
+<insert id="addPerson" parameterType="Person"  >
+        insert into ba_person (ID,userID,roleName,jobID,depID,groupID,workState,CreateDate) values 
+        (#{ID},#{userId},#{roleName},#{jobID},#{depID},#{groupId},#{workState},now())    
+</insert>    
+
+  <!-- 修改信息 -->
+<update id="editPerson" parameterType="Person" >      
+        update ba_person 
+        <set>        	 
+        	<if test="depID!=null and depID!=''"> depID = #{depID}, </if>
+        	<if test="state!=null and state!=''"> state = #{state}, </if>
+        	<if test="roleName!=null and roleName!=''"> roleName = #{roleName}, </if>
+        	<if test="workState!=null"> workState = #{workState}, </if>
+			<if test="workDate!=null and workDate!=''"> workDate = #{workDate}, </if> 
+        	<if test="leaveDate!=null and leaveDate!=''"> leaveDate = #{leaveDate}, </if>
+        	<if test="jobID!=null">jobID = #{jobID}, </if>
+        	<if test="personNumber!=null">personNumber = #{personNumber},</if>
+        	<if test="postName!=null">postName = #{postName},</if>
+        	<if test="workPhone!=null">workPhone = #{workPhone},</if>
+			<if test="otherPhone!=null">otherPhone = #{otherPhone},</if>        		
+        </set>
+        where userID = #{userId} and groupID = #{groupId}
+</update>
+
+ <!-- 添加部门表格  -->
+<insert id="addPersonTable" parameterType="Table"  >
+        insert into ba_table (ID,userId,groupId,data) values 
+        (#{id},#{userId},#{groupId},#{data})    
+</insert> 
+<!--查询部门表格-->
+<select id="selPersonTable"  resultType="Table" parameterType="Table">
+		select * from  ba_table where groupId = #{groupId} AND userId = #{userId}
+
+</select> 
+
+   <!-- 修改部门表格 -->
+<update id="editPersonTable" parameterType="Table">      
+        update ba_table set data = #{data} where groupId = #{groupId} and userId = #{userId}
+</update>
+
+
+    	<!-- 删除部门表格 -->
+	<delete id="deletePersonTable" parameterType="String">
+
+		 delete from ba_table where userId = #{userId}
+
+       	
+	</delete> 
+
+</mapper>

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yy.dao.UserDao">
+
+     <!-- 查询user关联的组织-->
+     <select id="selUserAboutGroup"  resultType="Group" parameterType="User">
+		 select im_group.* from  im_group inner join im_user_group iug
+			 on im_group.ID = iug.GroupID
+		 where iug.UserID = #{ID}
+		 group by iug.GroupID
+		 UNION
+		 select ig.* from im_group ig
+		inner join ba_customer_people bcp
+				 on bcp.groupID=ig.ID
+		inner join ba_customer_user_people bcup
+				 on bcup.cus_peo_id = bcp.ID
+		 where bcup.user_id=#{ID}
+	</select>
+
+	<!--查询部门下的同事-->
+	<select id="selGroupAndUser" parameterType="User" resultType="java.util.HashMap">
+		select iu.*,bp.depID from  im_user_group iug
+		inner join im_user iu
+		on iug.UserID = iu.ID
+		inner join ba_person bp
+		on bp.userID=iu.ID
+		where iug.GroupID= #{ID} and bp.state='通过'
+		<if test="psnName != null and psnName != ''">
+			And iu.psnName like concat('%',#{psnName},'%')
+		</if>
+		GROUP BY iug.UserID
+
+	</select>
+
+	<!--查询客户的同事-->
+	<select id="selCustomerColleague" parameterType="User" resultType="java.util.HashMap">
+		select iu.ID userID,iu.*,bcp.*
+		from ba_customer bc
+				 inner join ba_customer_people bcp
+							on bcp.cCusCode=bc.id
+				 inner join ba_customer_user_people bcup
+							on bcup.cus_peo_id=bcp.ID
+				 inner join im_user iu
+							on iu.ID = bcup.user_id
+		where bc.id = (
+			select  bc2.id from ba_customer_user_people bcup2
+									inner join ba_customer_people bcp2
+											   on bcp2.ID = bcup2.cus_peo_id
+									inner join ba_customer bc2
+											   on bc2.id= bcp2.cCusCode
+			where bcup2.user_id=#{ID})
+		<if test="psnName != null and psnName != ''">
+			And iu.psnName like concat('%',#{psnName},'%')
+		</if>
+		having iu.ID != #{ID}
+	</select>
+
+	<!--查询客户的技术-->
+	<select id="selectCustomerTechnique" parameterType="User" resultType="java.util.HashMap">
+		select iu.* from  im_user iu
+		   inner join ba_person bp
+					  on iu.ID = bp.userID
+		where bp.GroupID= (select ia.groupID from im_application ia inner join im_user iu on iu.mobilePhone=ia.applicationPhone where iu.ID=#{ID} and ia.state=1) and bp.state='通过'
+		<if test="psnName != null and psnName != ''">
+			And iu.psnName like concat('%',#{psnName},'%')
+		</if>
+	</select>
+
+	<!-- 查询user-->
+	<select id="selUser"  resultType="User" parameterType="User">
+		select *from  im_user
+		<where>
+			IsDel = 0
+			<if test="ID!=null and ID!= ''">AND ID = #{ID} </if>
+			<if test="EMCode!=null and EMCode!= ''">AND EMCode = #{EMCode} </if>
+			<if test="mobilePhone!=null and mobilePhone!= ''"> AND mobilePhone = #{mobilePhone} </if>
+			<if test="psnName!=null and psnName!= ''"> AND psnName like #{psnName} </if>
+			<if test="email!=null and email!= ''"> AND email = #{email} </if>
+			<if test="PasswordMD5!=null and PasswordMD5!= ''"> AND PasswordMD5 = MD5(#{PasswordMD5}) </if>
+		</where>
+	</select>
+
+
+	<!-- 添加user -->
+	<insert id="addUser" parameterType="User"  >
+	        insert into im_user (ID,psnName,EMCode,mobilePhone,IsDel,email,emName,PasswordMD5,CreateDate) values 
+	        (#{ID},#{psnName},#{EMCode},#{mobilePhone},#{IsDel},#{email},#{emName},MD5(#{PasswordMD5}),now())    
+	</insert>    
+       
+       
+       	<!-- 删除user -->
+	<delete id="deleteUser" parameterType="String">
+
+		 delete from im_user where ID = #{ID}
+
+       	
+	</delete>  
+         
+       <!-- 修改user信息 -->
+	<update id="editUser" parameterType="User" >      
+	        update im_user
+	        <set>
+	        	<if test="psnName!=null and psnName!= ''">  psnName = #{psnName}, </if>
+	        	<if test="emName!=null and emName!= ''">  emName = #{emName}, </if>
+				<if test="mobilePhone!=null and mobilePhone != ''"> mobilePhone = #{mobilePhone},</if>
+				<if test="signature!=null and signature != ''"> signature = #{signature},</if>
+				<if test="HeadImageData!=null and HeadImageData != ''">HeadImageData = #{HeadImageData},</if>
+				<if test="sex!=null and sex != ''">sex = #{sex},</if>
+				<if test="birthday!=null">birthday = #{birthday},</if>
+				<if test="address!=null and address != ''">address = #{address},</if>
+				<if test="qq!=null and qq!= ''">qq = #{qq},</if>
+				<if test="identity!=null and identity != ''">identity = #{identity},</if>
+				<if test="email!=null and email != ''">email = #{email},</if>
+				<if test="IsDel!=null "> IsDel = #{IsDel},</if>		
+				<if test="marriage!=null and marriage != ''">marriage = #{marriage},</if>
+				<if test="sosName!=null and sosName!= ''">sosName = #{sosName},</if>
+				<if test="sosPhone!=null and sosPhone!= ''">sosPhone = #{sosPhone},</if>
+	        </set>
+	        where ID = #{ID}
+	</update>
+	
+	<!-- 修改user密码 -->
+	<update id="ChangePassword" parameterType="User" >      
+	        update im_user set PasswordMD5 = MD5(#{PasswordMD5}) where mobilePhone = #{mobilePhone}
+	</update>
+	
+	
+	<!-- 查询账号密码 -->
+	<select id="Login"  resultType="User" parameterType="User">
+		select * from im_user where mobilePhone = #{mobilePhone} and PasswordMD5 = MD5(#{PasswordMD5})
+
+	</select>
+</mapper>

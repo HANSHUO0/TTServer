@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yy.dao.MenuDao">
+
+<select id="selMenu"  resultType="Menu" parameterType="Menu">
+		select * from  menu
+		<where>
+			<if test="title!=null and title!=''">AND title = #{title}</if> 
+			<if test="id!=null and id!=0">AND id = #{id}</if>
+		</where> 
+
+</select> 
+
+
+</mapper>

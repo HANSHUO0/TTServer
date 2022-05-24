@@ -1,0 +1,257 @@
+<div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+  <ul class="layui-tab-title">
+    <li class="layui-this">创建组织</li>
+    <li>加入组织</li> 
+  </ul>
+  <div class="layui-tab-content">
+    <div class="layui-tab-item layui-show">
+    	<form class="layui-form layui-card-header layuiadmin-card-header-auto" >
+		<cite style="font-size:22px;margin-left:80px">创建组织</cite>
+		<div class="test-table-reload-btn" >
+			<div class="layui-input-inline" style="display:flex;">
+				<cite>组织名:</cite>
+				<input class="layui-input" placeholder="长度不超过60位"
+					id="cGroupName" name="cGroupName" autocomplete="off" style="width:180px;margin-left:18px">
+			</div>	
+			<div class="layui-input-inline" style="display:flex;">
+				<cite>组织编号:</cite>
+				<input class="layui-input " placeholder="组织识别号"
+					id="cGroupCode" name="cGroupCode" autocomplete="off" style="width:180px;margin-left:5px;" readonly>
+			</div>			
+			<div class="layui-input-inline" style="display:flex;">
+				<cite>负责人:</cite>
+				<input class="layui-input " placeholder="负责人"
+					id="cGroupPeople" name="cGroupPeople" autocomplete="off" style="width:180px;margin-left:18px;">
+			</div>
+			<div class="layui-input-inline" style="display:flex;">
+				<cite>联系电话:</cite>
+				<input class="layui-input " placeholder="联系电话"
+					id="cGroupPhone" name="cGroupPhone" autocomplete="off" style="width:180px;margin-left:5px;">
+			</div>
+			<div class="layui-input-inline" style="display:flex;">
+				<cite>地址:</cite>
+				<input class="layui-input " placeholder="长度不超过60位"
+					id="cGroupAddress" name="cGroupAddress" autocomplete="off" style="width:180px;margin-left:33px;">
+			</div>
+			<div class="layui-input-inline" style="display:flex;">
+				<cite>管理员:</cite>
+				<input class="layui-input " placeholder="管理员"
+					id="cGroupAdmin" name="cGroupAdmin" autocomplete="off" readonly style="width:180px;margin-left:18px;">
+			</div>
+			<div class="layui-input-inline" style="display:flex;">
+				<cite>申请时间:</cite>
+				<input class="layui-input createDate" placeholder="申请时间"
+					id="createDate" name="createDate" autocomplete="off" readonly style="width:180px;margin-left:5px;">
+			</div>
+			<div class="layui-input-inline" style="margin-left:20%">
+				<img class="layui-upload-img"  id="ioimg" style="width:100px;height:100px;margin-top:5px;margin-left:20%">
+				<p id="demoText"></p>
+				<input type="text" name="cGroupImg" id="cGroupImg" value="" style="display:none">
+				<button type="button" class="layui-btn layui-btn-normal" id="test1" style="margin-left:20px">选择营业执照</button>
+			</div>
+			
+		</div>
+		<button id="add" class="layui-btn" lay-submit lay-filter="formDemo" style="margin-left:38%">提交</button>
+		</form>
+    </div>
+    <div class="layui-tab-item">
+    	<div class="layui-form layui-card-header layuiadmin-card-header-auto">
+		<cite style="font-size:22px;margin-left:60px">申请加入组织</cite>
+		<div class="test-table-reload-btn" style="margin-bottom: 10px;">
+		<p>可以测试输入组织码(9981661,5646656)</p>
+		<p>可以测试输入组织码名称如(公司,阿里)</p>
+			<div class="layui-inline">
+				<input class="layui-input find" placeholder="组织名或者组织编码"
+					id="find" autocomplete="off" style="width:180px;">
+			</div>			
+			<button id="search" class="layui-btn" onclick="searchGroup()">搜索</button>	
+		</div>
+		<div id = "groupList">
+			
+		</div>
+		</div>
+    </div>
+   
+  </div>
+</div>
+
+ <script>
+
+	layui.use(['form','upload'], function(){
+	   var form = layui.form;
+	   var $ = layui.jquery;
+	   var upload = layui.upload;
+		  
+	   
+	 	var myDate = new Date();
+	 	var minutes = myDate.getMinutes();
+	 	if((myDate.getMinutes()+'').length == 1)
+	 		minutes = '0'+(myDate.getMinutes()+'');
+		var time = myDate.getFullYear()+"-"+(parseInt(myDate.getMonth())+1)+"-"+myDate.getDate()+" "+myDate.getHours()+":"+minutes+":"+myDate.getSeconds();
+		var random = Math.floor((Math.random()+Math.floor(Math.random()*9+1))*Math.pow(10,6));
+		
+		$('#createDate')[0].value = time;
+		$('#cGroupAdmin')[0].value = $('#userName')[0].innerHTML;
+		$('#cGroupCode')[0].value = random;
+		
+		upload.render({
+			   elem: '#test1'
+			   ,url: '/upload/uploadimg.action'		
+			   ,size: 1024
+			   ,auto: false //选择文件后不自动上传
+			   ,bindAction: '#add' //指向一个按钮触发上传
+			   ,acceptMime: 'image/*'//只显示图片
+			   ,choose: function(obj){
+			     //将每次选择的文件追加到文件队列
+			     var files = obj.pushFile();		   
+			     obj.preview(function(index, file, result){
+			       $('#ioimg').attr('src',result);
+			     });
+			   }
+		   	   ,done: function(res, index, upload){
+		   	    if(res.code == 200){
+		   	      //将res返回的图片链接保存到表单的隐藏域
+		   	      		    
+		   	    	$('#cGroupImg')[0].value = res.data.src;
+		   	    	console.log($('#cGroupImg').val())
+		   	    }
+		   	   }
+		});
+	 	
+	 	
+		form.on('submit(formDemo)', function(s){				 
+			if(s.field.cGroupName != ''&&s.field.cGroupName != null){
+				if(s.field.cGroupName.length <= 60){
+					if(s.field.cGroupAddress.length <= 60){
+						$.ajax({
+					    	type: 'POST',
+					    	url: '/group/selgroup.action',
+					    	data: {IsDel:0},
+					    	success: function(res){
+					    		let point = 0;
+
+
+								for(let i=0; i< res.data.length;i++){
+
+									if(res.data[i].cgroupName == s.field.cGroupName){
+										layer.msg('组织名已存在，请重新输入',{icon: 2,time: 1000});
+										point = 1;
+										break;
+									}	
+								}
+
+								if(point == 0){
+									s.field.CreateUserID = getID();
+								
+									$.ajax({
+								    	type: 'POST',
+								    	url: '/group/addgroup.action',
+								    	data: s.field,
+								    	success: function(res){
+								    		if(res.msg == '申请成功')
+								    			layer.msg('提交申请组织成功',{icon: 1,time: 1500},
+														function (){layer.close(layer.index-1)});
+								    		else
+								    			layer.msg('提交申请组织失败',{icon: 2,time: 1500});
+								    	}
+								   });
+								}
+					    	}
+					   });
+					}else{
+						layer.msg('地址长度不能超过60位',{icon: 2,time: 1000});
+					    $('#cGroupAddress')[0].value = '';
+					}
+				}else{
+					layer.msg('组织名长度不能超过60位',{icon: 2,time: 1000});	
+					$('#cGroupName')[0].value = '';
+				}
+			}else
+			layer.msg('组织名不能为空',{icon: 2,time: 1000});
+			return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+		});
+	   
+	});
+	
+	
+	function searchGroup(){
+		var html;
+		
+
+		var message = $('#find')[0].value;
+		if(isNaN(parseInt(message))){
+			$.ajax({
+		    	type: 'POST',
+		    	url: '/group/selgroup.action',
+		    	data: {IsDel:0,cGroupName:message},
+		    	success: function(res){
+		    		if(res.msg == '查询成功'){
+		    			$('#groupList')[0].innerHTML='';
+		    			for(var i=0;i<res.count;i++){
+		    				html = '<div>'
+			    				+'<div id="groupName" style="font-size:13px;">组织名:'+res.data[i].cgroupName+'</div>'
+			    				+'<div id="groupAdmin" style="font-size:13px;">管理员:'+res.data[i].cgroupAdmin+'</div>'
+			    				+'</div>'
+			    				+'<button class="layui-btn join" style="position: absolute;left:75%;top:25%;">加入</button>';
+		    				
+		    				var div=document.createElement("div");
+		    				div.style.cssText='position:relative;display:flex;border-bottom:3px solid #f2f2f2;';
+		    				div.id = 'group'+i;
+		    				div.innerHTML = html;
+		    				$('#groupList')[0].appendChild(div);
+		    			}
+						
+		    			$('.join').on('click',function (){
+		    				var name = this.parentNode.childNodes[0].childNodes[0].innerHTML.split('组织名:')[1];
+		    				
+		    				
+		    				$.ajax({
+		    			    	type: 'POST',
+		    			    	url: '/sp/addapplication.action',
+		    			    	data: {groupID:window.top.getGroupID(),applicationName:window.top.getUser().name,applicationPhone:window.top.getUser().phone},
+		    			    	success: function(res){
+		    			    		layer.msg('已申请加入'+name,{icon: 1,time: 1000},function (){layer.close(layer.index-1)});
+		    			    	}
+		    				})
+		    				
+		    				
+		    			});
+		    		}		    			
+		    		else{
+		    			layer.msg('不存在此组织，请重新输入',{icon: 2,time: 1000});
+		    		}
+		    			
+		    	}
+		   });
+		}else{
+			$.ajax({
+		    	type: 'POST',
+		    	url: '/group/selgroup.action',
+		    	data: {IsDel:0,cGroupCode:parseInt(message)},
+		    	success: function(res){
+		    		if(res.msg == '查询成功'){
+		    			html = '<div id = "oneGroup" style="position:relative;display:flex;border-bottom:3px solid #f2f2f2;">'
+		    				+'<div>'
+		    				+'<div id="groupName" style="font-size:13px;">组织名:'+res.data[0].cgroupName+'</div>'
+		    				+'<div id="groupAdmin" style="font-size:13px;">管理员:'+res.data[0].cgroupAdmin+'</div>'
+		    				+'</div>'
+		    				+'<button class="layui-btn join" style="position: absolute;left:75%;top:25%;">加入</button>'
+		    			    +'</div>';
+		    			$('#groupList')[0].innerHTML = html;
+		    			$('.join').on('click',function (){
+		    				var name = this.parentNode.childNodes[0].childNodes[0].innerHTML.split('组织名:')[1];
+		    				
+		    				layer.msg('已申请加入'+name,{icon: 1,time: 1000},function (){layer.close(layer.index-1)});
+		    			});
+		    		}		    			
+		    		else{
+		    			layer.msg('组织码错误，请重新输入',{icon: 2,time: 1000});
+		    		}
+		    			
+		    	}
+		   });
+		}
+			
+	}
+ </script>
+

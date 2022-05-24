@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yy.dao.TicketDao">
+
+
+	<!-- 查询-->    
+     <select id="selTicket"  resultType="Ticket" parameterType="Ticket">
+		select ba_ticket.*,a.psnName AS legalPersonName,b.psnName AS assigneeName,c.psnName AS casePersonName,d.psnName AS accessPeopleName
+		from  ba_ticket 
+		LEFT JOIN im_user a on ba_ticket.legalPerson = a.id
+		LEFT JOIN im_user b on ba_ticket.assignee = b.id
+		LEFT JOIN im_user c on ba_ticket.casePerson = c.id
+		LEFT JOIN im_user d on ba_ticket.accessPeople = d.id
+
+		
+		<where>
+		ba_ticket.groupID = #{groupID}
+		<if test="id!=null and id!= ''">AND ba_ticket.id = #{id} </if>
+		<if test="cid!=null and cid!= ''">AND ba_ticket.cid = #{cid} </if>
+		<if test="userID!=null and userID!= ''">AND ba_ticket.userID = #{userID} </if>
+		<if test="progress!=null and progress!= ''">AND ba_ticket.progress = #{progress} </if>
+		<if test="test1!=null and test1!= ''">AND ${chooseDate} <![CDATA[ >= ]]> #{test1} </if>
+		<if test="test2!=null and test2!= ''">AND ${chooseDate} <![CDATA[ <= ]]> #{test2} </if>
+		</where>
+		<if test="curPage!=null">limit #{curPage},#{pageSize} </if>
+		
+	</select>
+
+
+	<!-- 查询-->    
+     <select id="selTicketCount" resultType="Integer" parameterType="Ticket">
+		 select COUNT(*) from  ba_ticket
+		
+		<where>
+		groupID = #{groupID}
+		<if test="progress!=null and progress!= ''">AND progress = #{progress} </if>		
+		</where>
+	</select>
+
+
+
+	<!-- 删除 -->
+	<delete id="deleteTicket" parameterType="String" >
+		        delete from ba_ticket where id in (
+		        	<foreach collection="ids.split(',')" item="item" index="index" separator=",">
+		        		#{item}
+		        	</foreach>
+		        ) 
+	</delete>
+	
+
+     <!-- 查询最后一条-->    
+     <select id="selTicketEnd"  resultType="Ticket" parameterType="Ticket">
+		select ba_ticket.*,a.psnName AS legalPersonName,b.psnName AS assigneeName,c.psnName AS casePersonName,d.psnName AS accessPeopleName
+		from  ba_ticket 
+		LEFT JOIN im_user a on ba_ticket.legalPerson = a.id
+		LEFT JOIN im_user b on ba_ticket.assignee = b.id
+		LEFT JOIN im_user c on ba_ticket.casePerson = c.id
+		LEFT JOIN im_user d on ba_ticket.accessPeople = d.id
+		
+		<where>
+		<if test="id!=null and id!= ''">AND ba_ticket.id = #{id} </if>
+		<if test="cid!=null and cid!= ''">AND ba_ticket.cid = #{cid} </if>
+		<if test="userID!=null and userID!= ''">AND ba_ticket.userID = #{userID} </if>
+		<if test="groupID!=null and groupID!= ''">AND ba_ticket.groupID = #{groupID} </if>
+		ORDER BY ba_ticket.cid DESC LIMIT 0,1 
+		</where>
+	</select>    
+         
+      <!-- 查询第一条-->    
+    <select id="selTicketFirst"  resultType="Ticket" parameterType="Ticket">
+		 select ba_ticket.*,a.psnName AS legalPersonName,b.psnName AS assigneeName,c.psnName AS casePersonName,d.psnName AS accessPeopleName
+		from  ba_ticket 
+		LEFT JOIN im_user a on ba_ticket.legalPerson = a.id
+		LEFT JOIN im_user b on ba_ticket.assignee = b.id
+		LEFT JOIN im_user c on ba_ticket.casePerson = c.id
+		LEFT JOIN im_user d on ba_ticket.accessPeople = d.id
+		<where>
+		<if test="cid!=null and cid!= ''">AND ba_ticket.cid = #{cid} </if>
+		<if test="userID!=null and userID!= ''">AND ba_ticket.userID = #{userID} </if>
+		<if test="groupID!=null and groupID!= ''">AND ba_ticket.groupID = #{groupID} </if>
+		ORDER BY cid ASC LIMIT 0,1 
+		</where>
+	</select>    
+	
+    <!-- 查询上一条-->    
+    <select id="selTicketForWord"  resultType="Ticket" parameterType="Ticket">
+		select ba_ticket.*,a.psnName AS legalPersonName,b.psnName AS assigneeName,c.psnName AS casePersonName,d.psnName AS accessPeopleName
+		from  ba_ticket 
+		LEFT JOIN im_user a on ba_ticket.legalPerson = a.id
+		LEFT JOIN im_user b on ba_ticket.assignee = b.id
+		LEFT JOIN im_user c on ba_ticket.casePerson = c.id
+		LEFT JOIN im_user d on ba_ticket.accessPeople = d.id
+		 where ba_ticket.groupID = #{groupID} AND ba_ticket.cid <![CDATA[<]]> #{cid} order by ba_ticket.cid desc limit 1
+	</select> 
+	   <!-- 查询下一条-->    
+    <select id="selTicketNext"  resultType="Ticket" parameterType="Ticket">
+		 select ba_ticket.*,a.psnName AS legalPersonName,b.psnName AS assigneeName,c.psnName AS casePersonName,d.psnName AS accessPeopleName
+		from  ba_ticket 
+		LEFT JOIN im_user a on ba_ticket.legalPerson = a.id
+		LEFT JOIN im_user b on ba_ticket.assignee = b.id
+		LEFT JOIN im_user c on ba_ticket.casePerson = c.id
+		LEFT JOIN im_user d on ba_ticket.accessPeople = d.id
+		 where ba_ticket.groupID = #{groupID} AND ba_ticket.cid > #{cid} order by ba_ticket.cid asc limit 1
+	</select> 
+         
+
+     <!-- 添加 -->
+	<insert id="addTicket" parameterType="Ticket">
+	        insert into ba_ticket (id,groupID,userID,cid,cCusName,address,cContact,appointmentDate,cusVIP,dep,emergency,endDate,failureDate,faultType,inSources,phone,position,processing,product,registerPeople,serialNumber,states,description,type,progress,createTime) values 
+	        (#{id},#{groupID},#{userID},#{cid},#{cCusName},#{address},#{cContact},#{appointmentDate},#{cusVIP},#{dep},#{emergency},#{endDate},#{failureDate},#{faultType},#{inSources},#{phone},#{position},#{processing},#{product},#{registerPeople},#{serialNumber},#{states},#{description},#{type},#{progress},now())    
+	</insert> 
+	
+	
+	<!-- 修改信息 -->
+	<update id="editTicket" parameterType="Ticket">      
+	        update ba_ticket 
+	         <set>	        	
+	         
+	         	<if test="description!=null "> description = #{description}, </if>
+	         	<if test="cContact!=null "> cContact = #{cContact}, </if>
+	         	<if test="phone!=null "> phone = #{phone}, </if>
+	         	<if test="address!=null "> address = #{address}, </if>
+	         	<if test="processing!=null "> processing = #{processing}, </if>
+	         	<if test="faultType!=null "> faultType = #{faultType}, </if>
+	         	<if test="appointmentDate!=null "> appointmentDate = #{appointmentDate}, </if>
+	         	<if test="position!=null "> position = #{position}, </if>
+	         	<if test="dep!=null "> dep = #{dep}, </if>
+	         	<if test="emergency!=null "> emergency = #{emergency}, </if>
+	         	<if test="inSources!=null "> inSources = #{inSources}, </if>
+	         	<if test="serialNumber!=null "> serialNumber = #{serialNumber}, </if>
+	         	<if test="endDate!=null "> endDate = #{endDate}, </if>
+	        	<if test="progress!=null and progress!=''"> progress = #{progress}, </if>    
+	        	<if test="legalPerson!=null "> legalPerson = #{legalPerson}, </if> 
+	        	<if test="sendPerson!=null"> sendPerson = #{sendPerson}, </if> 
+	        	<if test="sendDate!=null "> sendDate = #{sendDate}, </if> 
+	        	<if test="claimDate!=null "> claimDate = #{claimDate}, </if> 
+	        	<if test="finishDate!=null "> finishDate = #{finishDate}, </if> 
+	        	<if test="processing2!=null "> processing2 = #{processing2}, </if> 
+				<if test="wages!=null "> wages = #{wages}, </if>    
+				<if test="otherMes!=null "> otherMes = #{otherMes}, </if> 
+				<if test="assignee!=null"> assignee = #{assignee}, </if> 
+				<if test="acceptanceDate!=null"> acceptanceDate = #{acceptanceDate}, </if> 
+				<if test="processing3!=null and processing3!=''"> processing3 = #{processing3}, </if> 
+				<if test="errorReason!=null and errorReason!=''"> errorReason = #{errorReason}, </if> 
+				<if test="solve!=null and solve!=''"> solve = #{solve}, </if>  
+				<if test="casePerson!=null and casePerson!=''"> casePerson = #{casePerson}, </if> 
+				<if test="caseDate!=null and caseDate!=''"> caseDate = #{caseDate}, </if> 
+				<if test="integral!=null and integral!=''"> integral = #{integral}, </if> 
+				<if test="accessPeople!=null"> accessPeople = #{accessPeople}, </if>  
+				<if test="accessDate!=null "> accessDate = #{accessDate}, </if> 
+				<if test="overview!=null"> overview = #{overview}, </if> 
+				<if test="feedback!=null "> feedback = #{feedback}, </if>            		
+	        </set>
+	        where groupID = #{groupID} and id in 
+	        <foreach collection="id.split(',')" item="item" index="index"  open="(" separator="," close=")">
+	        	#{item}
+	        </foreach>
+
+	</update>
+	
+	
+	 <!-- 添加 -->
+	<insert id="addTicketProgress" parameterType="java.util.ArrayList">
+		
+		insert into ba_ticket_progress (id,groupID,ticketID,userID,processing2,getUserID,sendDate,claimDate,finishDate,wages,otherMes,isDel,createTime) values
+			<foreach collection="list" item = "item" index="index" separator=","> 
+	        	(#{item.id},#{item.groupID},#{item.ticketID},#{item.userID},#{item.processing2},#{item.getUserID},#{item.sendDate},#{item.claimDate},#{item.finishDate},#{item.wages},#{item.otherMes},#{item.isDel},now())    
+			</foreach>
+			
+	</insert> 
+	
+	
+	 <!-- 修改 -->
+	<insert id="editTicketProgress" parameterType="TicketProgress">
+		
+		update ba_ticket_progress set isDel = #{isDel} 
+		<where>
+			groupID = #{groupID} and ticketID = #{ticketID}
+			<if test="getUserID!=null and getUserID!= ''">AND getUserID = #{getUserID} </if>
+		</where>
+	</insert>
+	
+	<!-- 删除 -->
+	<delete id="deleteTicketProgress" parameterType="String">
+
+		 delete from ba_ticket_progress where groupID = #{groupID} and ticketID = #{ticketID}
+
+	</delete>  
+	
+	
+	
+	 <!-- 添加 -->
+	<insert id="addTicketAccept" parameterType="TicketAccepts">
+		
+		insert into ba_ticket_accepts (id,groupID,ticketID,assignee,acceptanceDate,createTime) values	
+	    (#{id},#{groupID},#{ticketID},#{assignee},#{acceptanceDate},now())    
+					
+	</insert>
+	
+	   	<!-- 删除 -->
+	<delete id="deleteTicketAccept" parameterType="TicketAccepts">
+
+		 delete from ba_ticket_accepts where groupID = #{groupID} and ticketID in (
+	 		<foreach collection="ticketID.split(',')" item="item" index="index" separator=",">
+        		#{item}
+        	</foreach>
+		 )
+
+	</delete>  
+	
+	<!-- 修改信息 -->
+	<update id="editTicketAccept" parameterType="TicketAccepts">      
+	        update ba_ticket_accepts
+	         <set>	        	
+				<if test="processing3!=null and processing3!=''"> processing3 = #{processing3}, </if> 
+				<if test="errorReason!=null and errorReason!=''"> errorReason = #{errorReason}, </if> 
+				<if test="solve!=null and solve!=''"> solve = #{solve}, </if>  
+				<if test="casePerson!=null and casePerson!=''"> casePerson = #{casePerson}, </if> 
+				<if test="caseDate!=null and caseDate!=''"> caseDate = #{caseDate}, </if> 
+				<if test="integral!=null and integral!=''"> integral = #{integral}, </if>       		
+	        </set>
+	        where groupID = #{groupID} and ticketID in (
+	        	<foreach collection="ticketID.split(',')" item="item" index="index" separator=",">
+	        		#{item}
+	        	</foreach>
+	        )
+	        order by createTime desc limit 1
+	        
+	</update>
+	
+	
+	
+	
+	<!-- 查询-->    
+     <select id="selTicketAccept"  resultType="TicketAccept" parameterType="TicketAccept">
+		 select ba_ticket.id,ba_ticket_progress.claimDate,ba_ticket.cid,ba_ticket.cCusName,ba_ticket.description,ba_ticket.emergency,im_user.psnName,ba_ticket_progress.isDel from  ba_ticket_progress  
+		 LEFT JOIN ba_ticket on  ba_ticket.id = ba_ticket_progress.ticketID
+		 LEFT JOIN im_user on  im_user.ID = ba_ticket_progress.getUserID
+		<where>
+		ba_ticket_progress.groupID = #{groupID}		
+		<if test="getUserID!=null and getUserID!= ''">AND getUserID = #{getUserID} </if>
+		<if test="progress!=null and progress!= ''">AND ba_ticket.progress = #{progress} </if>		
+		<if test="isDel!=null and isDel!= ''">AND ba_ticket_progress.isDel = #{isDel} </if>	
+		</where>
+		ORDER BY ba_ticket_progress.createTime DESC
+	</select>
+	
+	
+	<!-- 查询-->    
+     <select id="selTicketBehavior"  resultType="TicketBehavior" parameterType="TicketBehavior">
+		 select * from  ba_ticket_behavior where groupID = #{groupID} and ticketID = #{ticketID} ORDER BY createTime DESC		
+	</select>
+	
+	 <!-- 添加 -->
+	<insert id="addTicketBehavior" parameterType="TicketBehavior">
+		
+		insert into ba_ticket_behavior (id,groupID,ticketID,firstPeople,behavior,secondPeople,message,createTime) values
+	    (uuid(),#{groupID},#{ticketID},#{firstPeople},#{behavior},#{secondPeople},#{message},now())    
+	
+	</insert>
+</mapper>

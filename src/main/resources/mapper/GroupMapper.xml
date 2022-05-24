@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yy.dao.GroupDao">
+
+    <!-- 查询用户下的Group-->
+    <select id="selGroup"  resultType="Group" parameterType="Group">
+        select * FROM im_group
+        <where>
+            <if test="IsDel!=null">AND IsDel = #{IsDel}</if>
+            <if test="cGroupName!=null and cGroupName!=''">AND cGroupName like '%${cGroupName}%'</if>
+            <if test="cGroupCode!=null and cGroupCode!=''">AND cGroupCode = #{cGroupCode}</if>
+
+        </where>
+
+        <if test="ID != null and ID != ''">
+            ORDER BY
+            ID=#{ID} asc
+        </if>
+
+    </select>
+
+    <!-- 添加userGroup -->
+	<sql id="key">
+   <trim suffixOverrides=",">
+    <if test="ID!=null and ID!=''">
+     ID,
+    </if>
+    <if test="UserID!=null and UserID!=''">
+     UserID,
+    </if>
+    <if test="GroupID!=null and GroupID!=''">
+     GroupID,
+    </if>
+    <if test="MenuID!=null ">
+     MenuID,
+    </if>
+    <if test="AddData!=null and AddData!=''">
+     AddData,
+    </if>
+    <if test="CreateDate!=null">
+     CreateDate,	
+    </if>
+   </trim>
+  </sql>
+  
+  <!-- 对应的插入字段的值 -->
+  <sql id="values">
+   <trim suffixOverrides=",">
+    <if test="ID!=null and ID!=''">
+     #{ID},
+    </if>
+    <if test="UserID!=null and UserID!=''">
+     #{UserID},
+    </if>
+    <if test="GroupID!=null and GroupID!=''">
+     #{GroupID},
+    </if>
+    <if test="MenuID!=null ">
+     #{MenuID},
+    </if>
+    <if test="AddData!=null and AddData!=''">
+     #{AddData},
+    </if>
+    <if test="CreateDate!=null">
+     now(),	
+    </if>
+   </trim>
+  </sql>
+  <insert id="addUserGroup" parameterType="UserGroup">
+   insert into im_user_group(<include refid="key"/>) 
+    values(<include refid="values"/>)
+  </insert>
+	
+	
+	 <insert id="addUserGroup2" parameterType="UserGroup">
+	   insert into im_user_group (ID,UserID,GroupID,MenuID,CreateDate) values
+	    <foreach collection="Menuids.split(',')" item="item" index="index" separator=",">
+		        		(uuid(),#{UserID},#{GroupID},#{item},now())
+		 </foreach>
+	  </insert>
+	
+	
+	
+	
+	<!-- 删除 -->
+	<delete id="deleteUserGroup" parameterType="UserGroup" >
+		        delete from im_user_group where UserID = #{UserID} and GroupID = #{GroupID}
+	</delete>	
+		
+	
+	<!-- 添加Group -->
+	<insert id="addGroup" parameterType="Group"  >
+        insert into im_group (ID,CreateUserID,cGroupPhone,cGroupAdmin,cGroupPeople,cGroupImg,cGroupAddress,IsDel,cGroupCode,cGroupName,CreateDate)
+        values (#{ID},#{CreateUserID},#{cGroupPhone},#{cGroupAdmin},#{cGroupPeople},#{cGroupImg},#{cGroupAddress},#{IsDel},#{cGroupCode},#{cGroupName},#{createDate})
+	</insert>  
+
+	<!-- 修改Group -->
+	<update id="editGroup" parameterType="Group">
+      
+	        update im_group
+	        <set>
+	        	<if test="IsDel!=null"> IsDel = #{IsDel}, </if>	
+	        	ModifyDate = now()					
+	        </set>
+	        where cGroupCode = #{cGroupCode}
+	</update> 
+</mapper>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yy.dao.DepartmentDao">
+<!-- 查询  -->
+<select id="selDepartment"  resultType="Department" parameterType="String">
+		select * from  im_department
+		<where>
+			<if test="groupID!=null and groupID!=''">AND groupID = #{groupID}</if> 
+		</where> 
+
+</select> 
+
+ <!-- 添加  -->
+<insert id="addDepartment" parameterType="Department"  >
+        insert into im_department (id,groupID,listData,showDate,revokeDate,CreateDate) values 
+        (#{id},#{groupID},#{listData},#{showDate},#{revokeDate},now())    
+</insert>    
+
+   <!-- 修改信息 -->
+	<update id="editDepartment" parameterType="Department" >      
+	        update im_department 
+	         <set>
+	        	<if test="listData!=null and listData!=''"> listData = #{listData} , </if>
+	        	<if test="showData!=null and showData!=''"> showData = #{showData}, </if>
+	        	<if test="revokeDate!=null and revokeDate!=''"> revokeDate = #{revokeDate}, </if>        		
+	        </set>
+	        where groupID = #{groupID}
+	</update>
+
+</mapper>

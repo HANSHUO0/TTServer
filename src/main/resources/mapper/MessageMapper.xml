@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?> <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yy.dao.MessageDao">
+
+    <!--查询未读消息数-->
+    <select id="selNewMessage" parameterType="User" resultType="MessageList">
+        SELECT  icp.id,chatID,receiverID,userID,content,lastTime,deleteMessageTime,isHas,
+               (CASE receiverID
+               WHEN #{ID} THEN count
+               ELSE '0' END) count,iu.psnName userName,bcp.cName cusName
+        FROM im_chat_people icp
+                 INNER JOIN im_user iu
+                            on iu.ID=icp.userID
+                 left join ba_customer_user_people bcup
+                            on bcup.user_id = iu.ID
+                 left join ba_customer_people bcp
+                            on bcp.ID = bcup.cus_peo_id
+        WHERE receiverID = #{ID} or userID=#{ID} and lastTime  &gt;= deleteMessageTime
+        HAVING deleteMessageTime &lt;= lastTime
+    </select>
+
+
+    <!--发送消息-->
+    <insert id="addMessage" parameterType="Message">
+        insert into im_personfriend(chatID, chatPeopleID, receiverID, userID, cSendCode, iNewType, CreateDate, news, isDel)
+        VALUES(
+               <if test="chatID != null and chatID != '' ">
+                   #{chatID},
+               </if>
+            <if test="chatID == null or chatID == '' ">
+                (SELECT id from im_chat WHERE (userID=#{userID} and receiverID=#{receiverID}) or
+                (userID=#{receiverID} and receiverID=#{userID})),
+            </if>
+               (SELECT id from im_chat_people WHERE receiverID=#{receiverID} and userID=#{userID}),#{receiverID},#{userID},#{cSendCode},#{iNewType},#{CreateDate},#{news},#{isDel});
+        update im_chat_people set
+    <if test="count != null and count != ''">count=#{count},</if>
+    <if test="count == null or count == ''">count=count+1,</if> content=#{news},lastTime=#{CreateDate}
+        where userID=#{userID} and receiverID=#{receiverID};
+        update im_chat_people set content=#{news},lastTime=#{CreateDate}
+        where userID=#{receiverID} and receiverID=#{userID};
+    </insert>
+
+    <!--查询未读消息内容及聊天内容-->
+    <select id="selectChatContent" parameterType="Message" resultType="Message">
+        SELECT ip.* from im_personfriend ip
+                             left join im_chat_people icp
+                                       on ip.chatID = icp.chatID
+        WHERE ip.chatID in (SELECT id from im_chat WHERE (userID =#{userID} and receiverID=#{receiverID}) or (receiverID =#{userID} and userID=#{receiverID}))
+          and (ip.CreateDate &gt;= icp.deleteMessageTime and icp.receiverID=#{receiverID})
+        GROUP BY ip.ID
+        ORDER BY ip.CreateDate asc;
+
+        UPDATE  im_chat_people set count=0 WHERE userID=#{userID} and receiverID=#{receiverID};
+        UPDATE  im_personfriend set iNewType = 2 WHERE userID=#{userID} and receiverID=#{receiverID} AND iNewType=1;
+    </select>
+
+    <!--添加聊天主表ID-->
+    <insert id="addChat" parameterType="Chat"  useGeneratedKeys="true" keyProperty="id" >
+        insert into im_chat(userID,receiverID) values(#{userID},#{receiverID});
+    </insert>
+
+    <!--添加聊天人列表ID-->
+    <insert id="addChatPeople" parameterType="MessageList">
+    insert into im_chat_people(chatID, receiverID, userID, content, lastTime, count,deleteMessageTime, isHas)
+    VALUES (#{chatID},#{receiverID},#{userID},#{content},#{lastTime},#{count},'1999-03-28 10:24:41',#{isHas}),
+           (#{chatID},#{userID},#{receiverID},#{content},#{lastTime},'0','1999-03-28 10:24:41',#{isHas});
+    </insert>
+
+    <!--刷新已读-->
+    <update id="updateHaveRead" parameterType="Message">
+        UPDATE  im_chat_people set count=0 WHERE userID=#{userID} and receiverID=#{receiverID};
+        UPDATE  im_personfriend set iNewType = 2 WHERE userID=#{userID} and receiverID=#{receiverID} AND iNewType=1;
+    </update>
+
+    <!--删除聊天记录-->
+    <update id="deleteMessages" parameterType="MessageList">
+        update im_chat_people set deleteMessageTime=now()
+        where receiverID=#{userID} and userID=#{receiverID}
+    </update>
+
+    <!--查询主表ID-->
+    <select id="selectChatID" parameterType="Chat" resultType="integer">
+        SELECT id from im_chat
+        WHERE (receiverID=#{receiverID} and userID=#{userID})
+        or
+              (userID=#{receiverID} and receiverID=#{userID} )
+    </select>
+</mapper>

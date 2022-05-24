@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yy.dao.BaseDesignDao">
+
+	<!-- 查询 -->
+	<select id="selDesign"  resultType="BaseDesign" parameterType="BaseDesign">
+		        select * from sysdesign  
+				<where>
+				<if test="ID !=null and ID != ''"> ID = #{ID} </if>
+				<if test="DesignName !=null and DesignName != ''"> AND DesignName = #{DesignName} </if>
+				<if test="UserName !=null and UserName != ''"> AND UserName = #{UserName} </if>
+				<if test="PageTitle !=null and PageTitle != ''"> AND PageTitle = #{PageTitle} </if>
+				<if test="TableName !=null and TableName != ''"> AND TableName = #{TableName} </if>
+				<if test="Controller !=null and Controller != ''"> AND Controller = #{Controller} </if>
+				<if test="ViewName !=null and ViewName != ''"> AND ViewName = #{ViewName} </if>
+				</where>
+	</select>
+	
+	<!-- 部分数据查询 -->
+	<select id="selDesignOut" resultType="BaseDesign" parameterType="Integer[]">
+       		select * from sysdesign where cid in 
+       		<foreach collection="array" item = "cid" index="no" open="("
+					separator="," close=")">
+				  #{cid}
+			</foreach>    		
+    </select>
+	
+	
+	
+	<!-- 添加 -->
+	<insert id="addDesign" parameterType="BaseDesign">
+		        insert into sysdesign (ID,DesignName,PageTitle,TableName,Controller,ViewName,Design,PositioningBar,UserName,CreateUserID,CreateDate)
+		         values
+		         (#{ID},#{DesignName},#{PageTitle},#{TableName},#{Controller},#{ViewName},#{Design},#{PositioningBar},#{UserName},#{CreateUserID},now())    
+	</insert>
+	<!-- 删除 -->
+	<delete id="deleteDesign" parameterType="Integer" >
+		        delete from sysdesign where cid = #{cid}   
+	</delete>
+	
+	<!-- 修改 -->
+	<update id="editDesign" parameterType="BaseDesign" >
+		        update sysdesign 
+		        <set>
+		        	<if test="DesignName !=null and DesignName != ''">DesignName = #{DesignName},</if>
+					<if test="PageTitle !=null and PageTitle != ''"> PageTitle = #{PageTitle}, </if>
+					<if test="TableName !=null and TableName != ''">  TableName = #{TableName}, </if>
+					<if test="Design !=null and Design != ''"> Design = #{Design}, </if>
+					<if test="ModifyUserID !=null and ModifyUserID != ''"> ModifyUserID = #{ModifyUserID}, </if>
+					<if test="IsDel !=null and IsDel != ''"> IsDel = #{IsDel}, </if>
+		        </set>
+		        where cid = #{cid}    
+	</update>
+
+</mapper>

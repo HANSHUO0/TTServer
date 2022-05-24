@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yy.dao.IncreaseRulesDao">
+<!-- 查询  -->
+<select id="selIncreaseRules"  resultType="IncreaseRules" parameterType="IncreaseRules">
+		select * from  ba_increase_rules
+		<where>
+			<if test="groupID!=null and groupID!=''">AND groupID = #{groupID}</if> 
+			<if test="cArchivesName!=null and cArchivesName!=''">AND cArchivesName = #{cArchivesName}</if> 
+		</where> 
+
+</select> 
+
+ <!-- 添加  -->
+<insert id="addIncreaseRules" parameterType="IncreaseRules"  >
+        insert into ba_increase_rules 
+        (ID,groupID,createUserID,cArchivesName,cFirst,cLongText1,cSecond,cLongText2,cThird,cLongText3,cLongText4,cFirstNum,cNumlong,cFirstName,cSecondName,cThirdName,cShowNum,createTime) values 
+        (#{ID},#{groupID},#{createUserID},#{cArchivesName},#{cFirst},#{cLongText1},#{cSecond},#{cLongText2},#{cThird},#{cLongText3},#{cLongText4},#{cFirstNum},#{cNumlong},#{cFirstName},#{cSecondName},#{cThirdName},#{cShowNum},now())    
+</insert>    
+
+   <!-- 修改信息 -->
+	<update id="editIncreaseRules" parameterType="IncreaseRules" >      
+	        update ba_increase_rules
+	         <set>
+	        	<if test="createUserID!=null and createUserID!=''"> createUserID = #{createUserID} , </if>
+	        	<if test="cFirst!=null"> cFirst = #{cFirst}, </if>
+	        	<if test="cLongText1!=null and cLongText1!=''"> cLongText1 = #{cLongText1}, </if>
+	        	<if test="cSecond!=null"> cSecond = #{cSecond} , </if>
+	        	<if test="cLongText2!=null and cLongText2!=''"> cLongText2 = #{cLongText2}, </if>
+	        	<if test="cThird!=null"> cThird = #{cThird}, </if>
+	        	<if test="cLongText3!=null and cLongText3!=''"> cLongText3 = #{cLongText3} , </if>
+	        	<if test="cFirstNum!=null and cFirstNum!=''"> cFirstNum = #{cFirstNum}, </if>
+	        	<if test="cLongText4!=null and cLongText4!=''"> cLongText4 = #{cLongText4}, </if> 
+	        	<if test="cNumlong!=null and cNumlong!=''"> cNumlong = #{cNumlong}, </if> 
+	        	<if test="cFirstName!=null "> cFirstName = #{cFirstName} , </if>
+	        	<if test="cSecondName!=null "> cSecondName = #{cSecondName}, </if>
+	        	<if test="cThirdName!=null "> cThirdName = #{cThirdName}, </if> 
+	        	<if test="cShowNum!=null and cShowNum!=''"> cShowNum = #{cShowNum}, </if> 
+	        </set>
+	        where groupID = #{groupID} and cArchivesName = #{cArchivesName}
+	</update>
+
+</mapper>

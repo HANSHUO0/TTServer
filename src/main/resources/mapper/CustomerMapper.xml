@@ -1,0 +1,430 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yy.dao.CustomerDao">
+
+	<!-- 添加-->
+  <insert id="addCustomer" parameterType="Customer">
+   insert into ba_customer 
+   <trim prefix="(" suffix=")" suffixOverrides=",">
+    <if test="id!=null and id!=''">
+     id,
+    </if>
+     <if test="groupID!=null and groupID!=''">
+     groupID,
+    </if>
+    <if test="cCusCode!=null and cCusCode!=''">
+     cCusCode,
+    </if>
+    <if test="cCusName!=null and cCusName!=''">
+     cCusName,
+    </if>
+    <if test="cCusAddName!=null and cCusAddName!=''">
+     cCusAddName,
+    </if>
+    <if test="cSupUnit!=null and cSupUnit!=''">
+     cSupUnit,
+    </if>
+    <if test="cCCCode!=null and cCCCode!=''">
+     cCCCode,
+    </if>
+    <if test="cCusVIP!=null and cCusVIP!=''">
+     cCusVIP,
+    </if>
+     <if test="cPsnCode!=null and cPsnCode!=''">
+     cPsnCode,
+    </if>
+    <if test="cInfoSource!=null and cInfoSource!=''">
+     cInfoSource,
+    </if>
+    <if test="cCusPhone!=null and cCusPhone!=''">
+     cCusPhone,
+    </if>
+    <if test="cDepCode!=null and cDepCode !=''">
+     cDepCode,	
+    </if>
+    <if test="cCusAddress!=null and cCusAddress!=''">
+     cCusAddress,
+    </if>
+    <if test="cStatus!=null and cStatus!=''">
+     cStatus,
+    </if>
+    <if test="cMemo!=null and cMemo!=''">
+     cMemo,
+    </if>
+    <if test="cCusFax!=null and cCusFax!=''">
+     cCusFax,
+    </if>
+    <if test="dCapital!=null and dCapital !=''">
+     dCapital,	
+    </if>
+    <if test="cCusBussinse!=null and cCusBussinse!=''">
+     cCusBussinse,
+    </if>
+    <if test="dCusSale!=null and dCusSale!=''">
+     dCusSale,
+    </if>
+    <if test="iStaffCount!=null and iStaffCount!=''">
+     iStaffCount,
+    </if>
+    <if test="cCusHomePage!=null and cCusHomePage!=''">
+     cCusHomePage,
+    </if>
+    <if test="cDCCode!=null and cDCCode!=''">
+     cDCCode,
+    </if>
+     <if test="cTrade!=null and cTrade!=''">
+     cTrade,
+    </if>
+    <if test="cMail!=null and cMail !=''">
+     cMail,	
+    </if>
+    createTime
+   </trim>
+   <trim  prefix="values (" suffix=")" suffixOverrides=",">
+   <if test="id!=null and id!=''">
+     #{id},
+    </if>
+     <if test="groupID!=null and groupID!=''">
+     #{groupID},
+    </if>
+    <if test="cCusCode!=null and cCusCode!=''">
+     #{cCusCode},
+    </if>
+    <if test="cCusName!=null and cCusName!=''">
+     #{cCusName},
+    </if>
+    <if test="cCusAddName!=null and cCusAddName!=''">
+     #{cCusAddName},
+    </if>
+    <if test="cSupUnit!=null and cSupUnit!=''">
+     #{cSupUnit},
+    </if>
+    <if test="cCCCode!=null and cCCCode!=''">
+     #{cCCCode},
+    </if>
+    <if test="cCusVIP!=null and cCusVIP!=''">
+     #{cCusVIP},
+    </if>
+     <if test="cPsnCode!=null and cPsnCode!=''">
+     #{cPsnCode},
+    </if>
+    <if test="cInfoSource!=null and cInfoSource!=''">
+     #{cInfoSource},
+    </if>
+    <if test="cCusPhone!=null and cCusPhone!=''">
+     #{cCusPhone},
+    </if>
+    <if test="cDepCode!=null and cDepCode !=''">
+     #{cDepCode},	
+    </if>
+    <if test="cCusAddress!=null and cCusAddress!=''">
+     #{cCusAddress},
+    </if>
+    <if test="cStatus!=null and cStatus!=''">
+     #{cStatus},
+    </if>
+    <if test="cMemo!=null and cMemo!=''">
+     #{cMemo},
+    </if>
+    <if test="cCusFax!=null and cCusFax!=''">
+     #{cCusFax},
+    </if>
+    <if test="dCapital!=null and dCapital !=''">
+     #{dCapital},	
+    </if>
+    <if test="cCusBussinse!=null and cCusBussinse!=''">
+     #{cCusBussinse},
+    </if>
+    <if test="dCusSale!=null and dCusSale!=''">
+     #{dCusSale},
+    </if>
+    <if test="iStaffCount!=null and iStaffCount!=''">
+     #{iStaffCount},
+    </if>
+    <if test="cCusHomePage!=null and cCusHomePage!=''">
+     #{cCusHomePage},
+    </if>
+    <if test="cDCCode!=null and cDCCode!=''">
+     #{cDCCode},
+    </if>
+     <if test="cTrade!=null and cTrade!=''">
+     #{cTrade},
+    </if>
+    <if test="cMail!=null and cMail !=''">
+     #{cMail},	
+    </if>
+    now()
+   </trim>
+  </insert>
+	
+	
+	
+		 <!-- 添加  -->
+	<insert id="addCustomerExcel" parameterType="java.util.List">
+	       insert into ba_customer
+		    (   
+		        id,
+				groupID,
+				cCusCode,
+				cCusName,
+				cCusAddName,
+				cSupUnit,
+				cCCCode,
+				cCusVIP,
+	 			cPsnCode,
+				cInfoSource,
+				cCusPhone,
+				cDepCode,
+				cCusAddress,
+				cStatus,
+				cTrade,
+				cMemo,
+				cCusFax,
+				dCapital,
+				cCusBussinse,
+				dCusSale,
+	 			iStaffCount,
+				cCusHomePage,
+	 			cDCCode,
+				cMail,
+				createTime
+		    )
+   			values
+    <foreach collection="list" item="item" index= "index" separator =",">
+		    (
+		    	#{item.id},
+				#{item.groupID},
+				#{item.cCusCode},
+				#{item.cCusName},
+				#{item.cCusAddName},
+				#{item.cSupUnit},
+				#{item.cCCCode},
+				#{item.cCusVIP},
+	 			#{item.cPsnCode},
+				#{item.cInfoSource},
+				#{item.cCusPhone},
+				#{item.cDepCode},
+				#{item.cCusAddress},
+				#{item.cStatus},
+				#{item.cTrade},
+				#{item.cMemo},
+				#{item.cCusFax},
+				#{item.dCapital},
+				#{item.cCusBussinse},
+				#{item.dCusSale},
+	 			#{item.iStaffCount},
+				#{item.cCusHomePage},
+	 			#{item.cDCCode},
+				#{item.cMail},
+				now()
+		    )
+    </foreach>
+	</insert> 
+	
+		<!-- 删除 -->
+		<delete id="delCustomer" parameterType="String">
+	
+			 delete from ba_customer where cCusCode in	
+			 <foreach collection="array" item = "id" index="index" open="(" separator="," close=")">
+			  #{id}
+			 </foreach>
+		</delete>
+
+	
+		<!-- 查询  -->
+		<select id="selCustomer"  resultType="Customer" parameterType="Customer">
+			select * from  ba_customer 
+			<where>
+			<if test="id!=null and id!=''">AND id = #{id}</if>
+			<if test="groupID!=null and groupID!=''">AND groupID = #{groupID}</if>
+			<if test="cCCCode!=null and cCCCode!=''">AND FIND_IN_SET(cCCCode,#{cCCCode})</if>
+			<if test="cCusCode!=null and cCusCode!=''">AND cCusCode = #{cCusCode}</if>
+			<if test="cCusName!=null and cCusName!=''">AND cCusName like '%${cCusName}%'</if>
+			</where>
+		</select> 
+	
+		
+	<!-- 查询  -->
+<select id="selCustomerDesigns"  resultType="CustomerDesign" parameterType="CustomerDesign">
+		select * from  ba_customer_style
+		<where>
+			<if test="groupID!=null and groupID!=''">AND groupID = #{groupID}</if> 
+			<if test="userID!=null and userID!=''">AND userID = #{userID}</if>
+		</where> 
+
+</select> 
+
+ <!-- 添加  -->
+<insert id="addCustomerDesign" parameterType="CustomerDesign">
+        insert into ba_customer_style (ID,userID,groupID,design,positioningBar,createTime) values 
+        (#{ID},#{userID},#{groupID},#{design},#{positioningBar},now())    
+</insert>    
+
+   <!-- 修改信息 -->
+	<update id="editCustomerDesign" parameterType="CustomerDesign">      
+	        update ba_customer_style 
+	         <set>	        	
+	        	<if test="design!=null and design!=''"> design = #{design}, </if>        		
+	        </set>
+	        where userID = #{userID} and groupID = #{groupID}
+	</update>	
+		
+		
+	 <!-- 添加  -->
+	<insert id="addCustomerClass" parameterType="CustomerClass">
+	        insert into im_customerclass (ID,selectID,groupID,listData,createTime) values 
+	        (#{ID},#{selectID},#{groupID},#{listData},now())    
+	</insert>    
+
+   <!-- 修改 -->
+	<update id="editCustomerClass" parameterType="CustomerClass">      
+	        update im_customerclass 
+	         <set>	        	
+	        	<if test="listData!=null and listData!=''"> listData = #{listData}, </if>        		
+	        </set>
+	        where selectID = #{selectID} and groupID = #{groupID}
+	</update>
+		
+		
+		 <!-- 添加  -->
+	<insert id="addCustomerEffective" parameterType="CustomerEffective">
+	        insert into ba_customer_effective (ID,groupID,cCusCode,cid,cProductName,cStartDate,cEffective,cEndDate,note,createTime) values 
+	        (#{ID},#{groupID},#{cCusCode},#{cid},#{cProductName},#{cStartDate},#{cEffective},#{cEndDate},#{note},now())    
+	</insert> 
+	
+	
+	
+	 <!-- 添加  -->
+	<insert id="addCustomerAssociation" parameterType="CustomerAssociation">
+	        insert into ba_customer_association_company (ID,groupID,cCusCode,cCompanyName,cAssociation,createTime) values 
+	        (#{ID},#{groupID},#{cCusCode},#{cCompanyName},#{cAssociation},now())    
+	</insert> 
+	
+	<!-- 查询  -->
+	<select id="selCustomerAssociation"  resultType="CustomerAssociation" parameterType="CustomerAssociation">
+		select * from  ba_customer_association_company where groupID = #{groupID} and cCusCode = #{cCusCode}
+	</select>
+	
+	 <!-- 添加  -->
+	<insert id="addCustomerAddress" parameterType="CustomerAddress">
+	        insert into ba_customer_address (ID,groupID,cCusCode,cSupUnit,cCusAddress,isDefault,createTime) values 
+	        (#{ID},#{groupID},#{cCusCode},#{cSupUnit},#{cCusAddress},#{isDefault},now())    
+	</insert> 
+	
+	 <!-- 添加  -->
+	<insert id="addCustomerPeople" parameterType="CustomerPeople">
+	        insert into ba_customer_people (ID,groupID,cCusCode,cName,cDep,cPost,cClub,cPhone,cMoblePhone,cQQ,cMoblePhone2,cZR,cBridthday,cAge,cSex,cLike,cMove,cFriend,cEmail,cState,createTime) values 
+	        (#{ID},#{groupID},#{cCusCode},#{cName},#{cDep},#{cPost},#{cClub},#{cPhone},#{cMoblePhone},#{cQQ},#{cMoblePhone2},#{cZR},#{cBridthday},#{cAge},#{cSex},#{cLike},#{cMove},#{cFriend},#{cEmail},#{cState},now())    
+	</insert> 
+		
+	<!-- 查询  -->
+	<select id="selCustomerPeople"  resultType="CustomerPeople" parameterType="CustomerPeople">
+		select * from  ba_customer_people where groupID = #{groupID} and cCusCode = #{cCusCode}
+	</select>
+	
+	<!-- 删除  -->
+	<delete id="delCustomerPeople"   parameterType="CustomerPeople">
+		delete  from  ba_customer_people where groupID = #{groupID} and cCusCode = #{cCusCode}
+	</delete>
+	
+	<!-- 修改信息 -->
+	<update id="editCustomerPeople" parameterType="CustomerPeople">      
+	        update ba_customer_people
+	         <set>	        	
+	         	<if test="cName!=null and cName!=''"> cName = #{cName}, </if> 
+	        	<if test="cDep!=null and cDep!=''"> cDep = #{cDep}, </if>   
+	        	<if test="cPost!=null and cPost!=''"> cPost = #{cPost}, </if> 
+	        	<if test="cClub!=null and cClub!=''"> cClub = #{cClub}, </if>   
+	        	<if test="cPhone!=null and cPhone!=''"> cPhone = #{cPhone}, </if> 
+	        	<if test="cMoblePhone!=null and cMoblePhone!=''"> cMoblePhone = #{cMoblePhone}, </if>   
+	        	<if test="cQQ!=null and cQQ!=''"> cQQ = #{cQQ}, </if> 
+	        	<if test="cMoblePhone2!=null and cMoblePhone2!=''"> cMoblePhone2 = #{cMoblePhone2}, </if>  
+	        	<if test="cZR!=null and cZR!=''"> cZR = #{cZR}, </if> 
+	        	<if test="cBridthday!=null and cBridthday!=''"> cBridthday = #{cBridthday}, </if>   
+	        	<if test="cAge!=null"> cAge = #{cAge}, </if> 
+	        	<if test="cSex!=null and cSex!=''"> cSex = #{cSex}, </if>   
+	        	<if test="cLike!=null and cLike!=''"> cLike = #{cLike}, </if>    
+	        	<if test="cMove!=null and cMove!=''"> cMove = #{cMove}, </if>   
+	        	<if test="cFriend!=null and cFriend!=''"> cFriend = #{cFriend}, </if> 
+	        	<if test="cState!=null and cState!=''"> cState = #{cState}, </if>   
+	        	<if test="cEmail!=null and cEmail!=''"> cEmail = #{cEmail}, </if>   		
+	        </set>
+	        where cCusCode = #{cCusCode} and groupID = #{groupID}
+	</update>	
+	
+	<!-- 查询  -->
+	<select id="selCustomerEffective"  resultType="CustomerEffective" parameterType="CustomerEffective">
+		select * from  ba_customer_effective where groupID = #{groupID} and cCusCode = #{cCusCode}
+	</select> 
+	
+	<!-- 删除  -->
+	<delete id="delCustomerAddress"   parameterType="CustomerAddress">
+		delete from  ba_customer_address where groupID = #{groupID} and cCusCode = #{cCusCode}
+		 
+	</delete>
+	
+	<!-- 查询 -->
+	<select id="selCustomerAddress"  resultType="CustomerAddress" parameterType="CustomerAddress">
+		select * from  ba_customer_address where groupID = #{groupID} and cCusCode = #{cCusCode}
+		 
+	</select>
+
+	<!--查询客户联系人-->
+	<select id="selCustomerAndPeople" resultType="java.util.HashMap" parameterType="CustomerPeople">
+		SELECT bcup.user_id uID ,iu.psnName userName,bcp.*,bc.cCusName,bc.*
+		FROM ba_customer bc
+		inner join ba_customer_people bcp
+		on bc.id = bcp.cCusCode
+		inner join ba_customer_user_people bcup
+		on bcup.cus_peo_id = bcp.id
+		inner join im_user iu
+		on iu.ID= bcup.user_id
+		where bc.groupID = #{groupID}
+		 <if test="cName != null and cName !='' "> and bcp.cName like concat('%',#{cName},'%')</if>
+	</select>
+
+	<!--查询客户服务-->
+	<select id="selectCustomerEffective" parameterType="User" resultType="CustomerEffective">
+		SELECT bce.cProductName ,bce.cEndDate
+		FROM ba_customer bc
+				 inner join ba_customer_people bcp
+							on bcp.cCusCode = bc.id
+				 left join ba_customer_user_people bcup
+						   on bcup.cus_peo_id =  bcp.ID
+				 left join im_user iu
+						   on iu.ID = bcup.user_id
+				 left join ba_customer_effective bce
+						   on bce.cCusCode = bc.id
+		where iu.ID=#{ID}
+		ORDER BY bce.cEndDate desc
+	</select>
+
+	<!--查询客户信息-->
+	<select id="selectCustomerMessage" parameterType="User" resultType="CustomerPeople">
+		SELECT bcp.ID,bcp.cCusCode
+		from ba_customer_user_people bcup
+				 inner join ba_customer_people bcp
+							on bcp.ID=bcup.cus_peo_id
+				 inner join im_user iu
+							on iu.ID = bcup.user_id
+		where bcup.user_id=#{ID}
+	</select>
+	<!--修改地址和电话-->
+	<update id="editCustomerPhone" parameterType="User">
+		update ba_customer_people set cMoblePhone=#{mobilePhone} where ID=#{ID}
+
+	</update>
+	<update id="editCustomerCompanyAddress" parameterType="User">
+		update ba_customer set cCusAddress=#{address} where id=#{ID}
+	</update>
+
+	<!-- 修改信息 -->
+	<update id="editCustomerAddress" parameterType="CustomerAddress">      
+	        update ba_customer_address
+	         <set>	        	
+	         	<if test="cSupUnit!=null and cSupUnit!=''"> cSupUnit = #{cSupUnit}, </if> 
+	        	<if test="cCusAddress!=null and cCusAddress!=''"> cCusAddress = #{cCusAddress}, </if>        		
+	        </set>
+	        where cCusCode = #{cCusCode} and groupID = #{groupID}
+	</update>	
+</mapper>
